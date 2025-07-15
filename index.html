@@ -295,7 +295,6 @@
         .typewriter::after {
             content: "|";
             position: absolute;
-            right: -10px;
             animation: blink 1s infinite;
         }
 
@@ -600,16 +599,15 @@
 
     <script>
         window.onload = function() {
-            // alert('loaded');
             var cb = document.querySelector('.code-block');
             var line_n = 3;
             var stackElements = [
-                'JavaScript',
-                'Node.js',
                 'Python',
-                'Lua',
+                'Node.js',
                 'PHP',
-                'SQL'
+                'JavaScript',
+                'SQL',
+                'Lua'
             ];
             Array.from(stackElements).forEach((stackElem, stackID) => {
                 var cl = document.createElement('span');
