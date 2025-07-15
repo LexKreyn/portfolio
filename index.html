@@ -16,6 +16,7 @@
             --primary: #2c6fbb;
             --primary-dark: #1e5a9e;
             --bg: #f8f9fa;
+            --bg-primary: #393939;
             --paper: #ffffff;
             --text: #333344;
             --text-light: #6c757d;
@@ -62,7 +63,6 @@
             gap: 30px;
         }
 
-        /* Боковая панель - Файловый эксплорер */
         .sidebar {
             width: 260px;
             flex-shrink: 0;
@@ -123,7 +123,6 @@
             color: white;
         }
 
-        /* Основной контент - Блокнот */
         .notebook {
             flex-grow: 1;
             background: var(--paper);
@@ -177,7 +176,6 @@
             to { opacity: 1; }
         }
 
-        /* ИСПРАВЛЕНИЯ ДЛЯ БЛОКОВ КОДА */
         .code-block {
             background: var(--code-bg);
             border-radius: 8px;
@@ -196,8 +194,14 @@
             display: block;
             padding: 2px 0;
             position: relative;
-            padding-left: 40px; /* Место для номеров строк */
-            text-indent: -15px; /* Выравнивание текста относительно номера */
+            padding-left: 40px;
+            text-indent: -15px;
+            transition: background 0.3s ease;
+        }
+
+        .hero .code-block .code-line:hover {
+            background-color: var(--bg-primary);
+            transition: background 0.3s ease;
         }
 
         .code-line::before {
@@ -267,7 +271,6 @@
             width: 100%;
         }
 
-        /* Главная страница */
         .hero {
             text-align: center;
             max-width: 700px;
@@ -307,7 +310,6 @@
             50% { opacity: 0; }
         }
 
-        /* Проекты */
         .project-grid {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(500px, 1fr));
@@ -353,7 +355,6 @@
             border-bottom-color: transparent;
         }
 
-        /* Контакты */
         .contact-form {
             max-width: 500px;
             margin: 0 auto;
@@ -402,7 +403,6 @@
             background: var(--primary-dark);
         }
 
-        /* Терминал */
         .terminal {
             background: var(--terminal-bg);
             color: #d4d4d4;
@@ -603,10 +603,10 @@
             var line_n = 3;
             var stackElements = [
                 'Python',
-                'Node.js',
                 'PHP',
-                'JavaScript',
                 'SQL',
+                'JavaScript',
+                'Node.js',
                 'Lua'
             ];
             Array.from(stackElements).forEach((stackElem, stackID) => {
