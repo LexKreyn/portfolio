@@ -1,0 +1,715 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dev Portfolio | Alexey</title>
+    <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+    <link rel="manifest" href="/site.webmanifest">
+    <style>
+        :root {
+            --primary: #2c6fbb;
+            --primary-dark: #1e5a9e;
+            --bg: #f8f9fa;
+            --paper: #ffffff;
+            --text: #333344;
+            --text-light: #6c757d;
+            --border: #e0e0e0;
+            --shadow: rgba(0, 0, 0, 0.05);
+            --success: #4caf50;
+            --code-bg: #f5f7fa;
+            --terminal-bg: #1e1e1e;
+        }
+
+        .dark-mode {
+            --primary: #4da6ff;
+            --primary-dark: #3385cc;
+            --bg: #121212;
+            --paper: #1e1e1e;
+            --text: #e0e0e0;
+            --text-light: #a0a0a0;
+            --border: #333344;
+            --shadow: rgba(0, 0, 0, 0.3);
+            --code-bg: #2d2d2d;
+            --terminal-bg: #0d0d0d;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg);
+            color: var(--text);
+            line-height: 1.6;
+            transition: background 0.3s ease;
+        }
+
+        .container {
+            display: flex;
+            min-height: 100vh;
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px;
+            gap: 30px;
+        }
+
+        /* Боковая панель - Файловый эксплорер */
+        .sidebar {
+            width: 260px;
+            flex-shrink: 0;
+            background: var(--paper);
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0 4px 12px var(--shadow);
+            border: 1px solid var(--border);
+            position: sticky;
+            top: 20px;
+            height: fit-content;
+        }
+
+        .sidebar-title {
+            font-family: 'Fira Code', monospace;
+            font-size: 18px;
+            margin-bottom: 20px;
+            color: var(--primary);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .sidebar-title i {
+            font-size: 20px;
+        }
+
+        .file-tree {
+            list-style: none;
+        }
+
+        .file-item {
+            padding: 8px 12px;
+            border-radius: 6px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.2s;
+            font-size: 15px;
+        }
+
+        .file-item:hover {
+            background-color: var(--code-bg);
+        }
+
+        .file-item.active {
+            background-color: var(--primary);
+            color: white;
+        }
+
+        .file-item i {
+            width: 20px;
+            color: var(--primary);
+        }
+
+        .file-item.active i {
+            color: white;
+        }
+
+        /* Основной контент - Блокнот */
+        .notebook {
+            flex-grow: 1;
+            background: var(--paper);
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 4px 12px var(--shadow);
+            border: 1px solid var(--border);
+        }
+
+        .editor-header {
+            background-color: var(--code-bg);
+            padding: 12px 20px;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .editor-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+        }
+
+        .dot-red { background-color: #ff5f56; }
+        .dot-yellow { background-color: #ffbd2e; }
+        .dot-green { background-color: #27c93f; }
+
+        .editor-title {
+            font-family: 'Fira Code', monospace;
+            font-size: 14px;
+            color: var(--text-light);
+        }
+
+        .editor-content {
+            padding: 30px;
+            min-height: 80vh;
+        }
+
+        .section {
+            display: none;
+        }
+
+        .section.active {
+            display: block;
+            animation: fadeIn 0.5s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        /* ИСПРАВЛЕНИЯ ДЛЯ БЛОКОВ КОДА */
+        .code-block {
+            background: var(--code-bg);
+            border-radius: 8px;
+            padding: 25px;
+            font-family: 'Fira Code', monospace;
+            font-size: 16px;
+            line-height: 1.6;
+            border-left: 4px solid var(--primary);
+            margin: 25px 0;
+            text-align: left;
+            position: relative;
+            overflow-wrap: break-word;
+        }
+
+        .code-line {
+            display: block;
+            padding: 2px 0;
+            position: relative;
+            padding-left: 40px; /* Место для номеров строк */
+            text-indent: -15px; /* Выравнивание текста относительно номера */
+        }
+
+        .code-line::before {
+            content: attr(data-line);
+            position: absolute;
+            left: 10px;
+            width: 30px;
+            text-align: right;
+            color: var(--text-light);
+            font-size: 0.9em;
+            opacity: 0.7;
+        }
+
+        .code-line::before {
+            content: attr(data-line);
+            position: absolute;
+            left: -40px;
+            width: 30px;
+            text-align: right;
+            color: var(--text-light);
+            font-size: 0.9em;
+            opacity: 0.7;
+        }
+
+        .code-comment {
+            color: #6a737d;
+        }
+
+        .code-keyword {
+            color: var(--primary);
+        }
+
+        .code-string {
+            color: #50a14f;
+        }
+
+        .code-function {
+            color: #c678dd;
+        }
+
+        .code-param {
+            color: #e06c75;
+        }
+
+        .interactive {
+            cursor: pointer;
+            position: relative;
+            display: inline-block;
+        }
+
+        .interactive:hover {
+            background-color: rgba(44, 111, 187, 0.1);
+        }
+
+        .interactive::after {
+            content: "";
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 0;
+            height: 1px;
+            background: var(--primary);
+            transition: width 0.3s;
+        }
+
+        .interactive:hover::after {
+            width: 100%;
+        }
+
+        /* Главная страница */
+        .hero {
+            text-align: center;
+            max-width: 700px;
+            margin: 0 auto;
+            padding: 40px 0;
+        }
+
+        .hero h1 {
+            font-size: 3.5rem;
+            margin-bottom: 20px;
+            font-weight: 600;
+        }
+
+        .hero p {
+            font-size: 1.2rem;
+            color: var(--text-light);
+            margin-bottom: 30px;
+        }
+
+        .typewriter {
+            display: inline-block;
+            position: relative;
+        }
+
+        .typewriter::after {
+            content: "|";
+            position: absolute;
+            right: -10px;
+            animation: blink 1s infinite;
+        }
+
+        .blink {
+            animation: blink 1s infinite;
+        }
+
+        @keyframes blink {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0; }
+        }
+
+        /* Проекты */
+        .project-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(500px, 1fr));
+            gap: 25px;
+            margin-top: 20px;
+        }
+
+        .project-card {
+            background: var(--code-bg);
+            border-radius: 10px;
+            padding: 20px;
+            transition: transform 0.3s;
+            border: 1px solid var(--border);
+        }
+
+        .project-card:hover {
+            transform: translateY(-5px);
+            border-color: var(--primary);
+        }
+
+        .project-card h3 {
+            margin-bottom: 12px;
+            color: var(--primary);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .project-card p {
+            color: var(--text-light);
+            font-size: 0.95rem;
+        }
+
+        .project-title {
+            color: inherit;
+            text-decoration: none;
+            border-bottom: 1px dashed var(--primary);
+            transition: all 0.2s;
+        }
+
+        .project-title:hover {
+            color: var(--primary);
+            border-bottom-color: transparent;
+        }
+
+        /* Контакты */
+        .contact-form {
+            max-width: 500px;
+            margin: 0 auto;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+        }
+
+        .form-group input,
+        .form-group textarea {
+            width: 100%;
+            padding: 12px 15px;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            background: var(--code-bg);
+            color: var(--text);
+            font-family: 'Inter', sans-serif;
+            font-size: 16px;
+        }
+
+        .form-group textarea {
+            min-height: 150px;
+            resize: vertical;
+        }
+
+        .btn {
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 8px;
+            font-family: 'Fira Code', monospace;
+            font-size: 16px;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+
+        .btn:hover {
+            background: var(--primary-dark);
+        }
+
+        /* Терминал */
+        .terminal {
+            background: var(--terminal-bg);
+            color: #d4d4d4;
+            border-radius: 8px;
+            padding: 20px;
+            font-family: 'Fira Code', monospace;
+            font-size: 15px;
+            line-height: 1.6;
+            margin-top: 30px;
+        }
+
+        .terminal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .terminal-title {
+            color: #9cdcfe;
+        }
+
+        .terminal-content {
+            /* ... */
+        }
+
+        .terminal-command {
+            color: #4ec9b0;
+        }
+
+        .terminal-link {
+            color: inherit;
+            text-decoration: none;
+            border-bottom: 1px dashed var(--primary);
+            transition: all 0.2s;
+        }
+
+        .terminal-link:hover {
+            color: var(--primary);
+            border-bottom-color: transparent;
+        }
+
+        .code-string a {
+            color: #50a14f;
+            text-decoration: none;
+            border-bottom: 1px dashed rgba(80, 161, 79, 0.3);
+        }
+
+        .code-string a:hover {
+            border-bottom-color: #50a14f;
+        }
+
+        @media (max-width: 900px) {
+            .container {
+                flex-direction: column;
+            }
+            .sidebar {
+                width: 100%;
+                position: static;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="sidebar">
+            <h2 class="sidebar-title"><i class="fas fa-folder-open"></i> portfolio</h2>
+            <ul class="file-tree">
+                <li class="file-item active" data-target="home">
+                    <i class="fas fa-code"></i>home.js
+                </li>
+                <li class="file-item" data-target="projects">
+                    <i class="fas fa-folder"></i>projects.js
+                </li>
+                <li class="file-item" data-target="about">
+                    <i class="fas fa-file-alt"></i>about.md
+                </li>
+                <li class="file-item" data-target="contact">
+                    <i class="fas fa-terminal"></i>contact.sh
+                </li>
+            </ul>
+        </div>
+
+        <div class="notebook">
+            <div class="editor-header">
+                <div class="editor-dot dot-red"></div>
+                <div class="editor-dot dot-yellow"></div>
+                <div class="editor-dot dot-green"></div>
+                <div class="editor-title" id="current-file">home.js</div>
+            </div>
+
+            <div class="editor-content">
+                <div class="section active" id="home">
+                    <div class="hero">
+                        <h1>Hello, I'm <span style="color: var(--primary);">[Alexey]</span></h1>
+                        <p><span class="typewriter">&lt;skill/&gt; </span></p>
+
+                        <div class="code-block">
+                            <span class="code-line" data-line="1"><span class="code-comment">// My Technology stack:</span></span>
+                            <span class="code-line" data-line="2"><span class="code-keyword">const</span> <span class="code-function">technologies</span> = [</span>
+                        </div>
+
+                        <div class="code-block">
+                            <span class="code-line" data-line="1"><span class="code-comment">// My principles:</span></span>
+                            <span class="code-line" data-line="2"><span class="code-keyword">function</span> <span class="code-function">develop</span>(<span class="code-param">project</span>) {</span>
+                            <span class="code-line" data-line="3" style="padding-left: 80px"><span class="code-keyword">while</span> (!project.<span class="code-function">isPerfect</span>()) {</span>
+                            <span class="code-line" data-line="4" style="padding-left: 120px">        project.<span class="code-function">refactor</span>();</span>
+                            <span class="code-line" data-line="5" style="padding-left: 120px">        project.<span class="code-function">addFeature</span>();</span>
+                            <span class="code-line" data-line="6" style="padding-left: 80px">}</span>
+                            <span class="code-line" data-line="7">}</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="section" id="projects">
+                    <h2><i class="fas fa-project-diagram"></i> My Projects</h2>
+                    <p>Click on the project for details</p>
+
+                    <div class="project-grid">
+                        <div class="project-card">
+                            <h3><i class="fas fa-robot"></i> <a class="project-title" href="https://github.com/LexKreyn/NeedFree">SteamDiscounts</a></h3>
+                            <p>A price crawler in the Steam store that tracks current discounts</p>
+                            <div class="code-block">
+                                <span class="code-line"><span class="code-keyword">git</span> clone https://github.com/LexKreyn/NeedFree.git</span>
+                            </div>
+                        </div>
+
+                        <div class="project-card">
+                            <h3><i class="fas fa-shopping-cart"></i> <a class="project-title" href="https://github.com/LexKreyn/KinopoiskFree">KinopoiskFree</a></h3>
+                            <p>A script for TamperMonkey that adds a movie or TV series to the page on kinopoisk.ru a window with links for free viewing</p>
+                            <div class="code-block">
+                                <span class="code-line"><span class="code-function">window.open</span>(<span class="code-string">"https://github.com/LexKreyn/KinopoiskFree/raw/refs/heads/main/kinopoiskfree.user.js"</span>)</span>
+                            </div>
+                        </div>
+
+                        <!-- <div class="project-card">
+                            <h3><i class="fas fa-robot"></i> AI Assistant</h3>
+                            <p>NLP Voice Assistant in Python</p>
+                            <div class="code-block">
+                                <span class="code-line"><span class="code-keyword">import</span> ai_assistant</span>
+                                <span class="code-line">assistant.<span class="code-function">listen</span>()</span>
+                            </div>
+                        </div> -->
+                    </div>
+                </div>
+
+                <div class="section" id="about">
+                    <h2><i class="fas fa-user"></i> About me</h2>
+
+                    <div class="code-block">
+                        <span class="code-line"><span class="code-comment"># DEVELOPER PROFILE</span></span>
+                        <span class="code-line"><span class="code-comment">## EDUCATION</span></span>
+                        <span class="code-line">- 🎓 Computer Science, University</span>
+                        <span class="code-line">- 📚 Cloud Technology Certification</span>
+                        <br>
+                        <span class="code-line"><span class="code-comment">## SKILLS</span></span>
+                        <!-- <span class="code-line">- Frontend: <strong>React, Vue, TypeScript</strong></span> -->
+                        <span class="code-line">- Backend: <strong>Node.js, Flask/Quart, PHP</strong></span>
+                        <span class="code-line">- Database: <strong>MySQL, PostgreSQL, MongoDB, SQLite3</strong></span>
+                        <br>
+                        <span class="code-line"><span class="code-comment">## HOBBIES</span></span>
+                        <span class="code-line">- 🧩 Algorithms and data structures</span>
+                        <span class="code-line">- 👾 Reverse engineering</span>
+                        <span class="code-line">- 🌲 Walking in the woods</span>
+                        <span class="code-line">- 🚘 Motorsport</span>
+                    </div>
+                </div>
+
+                <div class="section" id="contact">
+                    <h2><i class="fas fa-envelope"></i> Contact me</h2>
+                    
+                    <div class="terminal">
+                        <div class="terminal-header">
+                            <div class="terminal-title">Terminal</div>
+                            <div>bash</div>
+                        </div>
+                        <div class="terminal-content">
+                            <span class="terminal-command">$ cat contacts.txt</span>
+                            <br>
+                            > Available contacts:
+                            <br><br>
+                            > - <i class="fas fa-envelope"></i> Email: <a href="mailto:czaralex01@gmail.com?subject=Offer%20of%20cooperation" class="interactive terminal-link">czaralex01@gmail.com</a>
+                            <br>
+                            > - <i class="fab fa-telegram"></i> Telegram: <a href="https://t.me/m/yJmonTiSYWI6" target="_blank" class="code-string">@nooneemee</a>
+                            <br>
+                            > - <i class="fab fa-discord"></i> Discord: <a href="https://discordapp.com/users/lexisz" target="_blank" class="code-string">lexisz</a>
+                            <br>
+                            <span class="terminal-command">$ </span><span class="blink">_</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        window.onload = function() {
+            // alert('loaded');
+            var cb = document.querySelector('.code-block');
+            var line_n = 3;
+            var stackElements = [
+                'JavaScript',
+                'Node.js',
+                'Python',
+                'Lua',
+                'PHP',
+                'SQL'
+            ];
+            Array.from(stackElements).forEach((stackElem, stackID) => {
+                var cl = document.createElement('span');
+                cl.classList.add('code-line');
+                cl.setAttribute('data-line', line_n);
+                cl.setAttribute('style', 'padding-left: 80px;');
+
+                var cs = document.createElement('span');
+                cs.classList.add('code-string');
+                cs.setAttribute('data-line', line_n);
+                cs.innerHTML = `"${stackElem}"`;
+
+
+                cl.appendChild(cs);
+
+                if (stackID + 1 < stackElements.length) {
+                    var tn = document.createTextNode(',');
+                    cl.appendChild(tn);
+                }
+
+                cb.appendChild(cl);
+
+                line_n += 1;
+            });
+
+            var cl = document.createElement('span');
+            cl.classList.add('code-line');
+            cl.setAttribute('data-line', line_n);
+            cl.innerHTML = '];';
+            cb.appendChild(cl);
+        }
+
+        document.querySelectorAll('.file-item').forEach(item => {
+            item.addEventListener('click', () => {
+                document.querySelector('.file-item.active').classList.remove('active');
+                item.classList.add('active');
+
+                const target = item.getAttribute('data-target');
+                document.querySelector('.section.active').classList.remove('active');
+                document.getElementById(target).classList.add('active');
+
+                document.getElementById('current-file').textContent = item.textContent.trim();
+            });
+        });
+
+        function updateTheme() {
+            const hour = new Date().getHours();
+            const isNight = hour < 7 || hour > 20;
+            document.body.classList.toggle('dark-mode', isNight);
+        }
+        
+        updateTheme();
+        setInterval(updateTheme, 60000);
+
+        console.log('%cHi! , The source code is available on GitHub: https://github.com/LexKreyn/portfolio', 'color: #4da6ff; font-size: 14px;');
+        console.log('Enter help() for additional commands.');
+
+        window.help = function() {
+            console.log('Available Commands:\n- projects() - show projects\n- contact() - contact information');
+        }
+        window.projects = function() {
+            console.log('%c[SteamDiscounts] A price crawler in the Steam store that tracks current discounts - https://github.com/LexKreyn/NeedFree', 'color: #4caf50;');
+            console.log('%c[KinopoiskFree] A script for TamperMonkey that adds a movie or TV series to the page on kinopoisk.ru a window with links for free viewing - https://github.com/LexKreyn/KinopoiskFree', 'color: #f50');
+        }
+        window.contact = function() {
+            console.log('%c[Email] czaralex01@gmail.com', 'color: #eb493b;');
+            console.log('%c[Telegram] @nooneemee', 'color: #27a4e2;');
+            console.log('%c[Discord] lexisz', 'color: #5865f2;');
+        }
+
+        const typewriterEl = document.querySelector('.typewriter');
+        const texts = ["Backend developer", "Python developer", "Reverse Engineer"];
+        let index = 0;
+        let charIndex = 0;
+        let isDeleting = false;
+
+        function typeText() {
+            const currentText = texts[index];
+
+            if (isDeleting) {
+                typewriterEl.textContent = '<skill/> ' + currentText.substring(0, charIndex - 1);
+                charIndex--;
+            } else {
+                typewriterEl.textContent = '<skill/> ' + currentText.substring(0, charIndex + 1);
+                charIndex++;
+            }
+
+            if (!isDeleting && charIndex === currentText.length) {
+                isDeleting = true;
+                setTimeout(typeText, 1500);
+            } else if (isDeleting && charIndex === 0) {
+                isDeleting = false;
+                index = (index + 1) % texts.length;
+                setTimeout(typeText, 500);
+            } else {
+                setTimeout(typeText, isDeleting ? 50 : 150);
+            }
+        }
+
+        setTimeout(typeText, 1000);
+    </script>
+</body>
+</html>
