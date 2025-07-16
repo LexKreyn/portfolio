@@ -63,6 +63,34 @@
             gap: 30px;
         }
 
+        .theme-toggle {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: var(--paper);
+            border: 1px solid var(--border);
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            z-index: 100;
+            box-shadow: 0 2px 8px var(--shadow);
+            transition: all 0.3s ease;
+        }
+
+        .theme-toggle:hover {
+            transform: rotate(15deg);
+            box-shadow: 0 3px 10px var(--shadow);
+        }
+
+        .theme-toggle i {
+            color: var(--primary);
+            font-size: 18px;
+        }
+
         .sidebar {
             width: 260px;
             flex-shrink: 0;
@@ -139,6 +167,7 @@
             display: flex;
             align-items: center;
             gap: 10px;
+            position: relative;
         }
 
         .editor-dot {
@@ -188,6 +217,7 @@
             text-align: left;
             position: relative;
             overflow-wrap: break-word;
+            overflow-x: auto;
         }
 
         .code-line {
@@ -197,6 +227,8 @@
             padding-left: 40px;
             text-indent: -15px;
             transition: background 0.3s ease;
+            white-space: pre-wrap;
+            word-break: break-word;
         }
 
         .hero .code-block .code-line:hover {
@@ -207,19 +239,8 @@
         .code-line::before {
             content: attr(data-line);
             position: absolute;
-            left: 10px;
-            width: 30px;
-            text-align: right;
-            color: var(--text-light);
-            font-size: 0.9em;
-            opacity: 0.7;
-        }
-
-        .code-line::before {
-            content: attr(data-line);
-            position: absolute;
-            left: -40px;
-            width: 30px;
+            left: 0px;
+            width: 15px;
             text-align: right;
             color: var(--text-light);
             font-size: 0.9em;
@@ -279,13 +300,13 @@
         }
 
         .hero h1 {
-            font-size: 3.5rem;
+            font-size: clamp(2rem, 5vw, 3.5rem);
             margin-bottom: 20px;
             font-weight: 600;
         }
 
         .hero p {
-            font-size: 1.2rem;
+            font-size: clamp(1rem, 3vw, 1.2rem);
             color: var(--text-light);
             margin-bottom: 30px;
         }
@@ -412,6 +433,7 @@
             font-size: 15px;
             line-height: 1.6;
             margin-top: 30px;
+            overflow-x: auto;
         }
 
         .terminal-header {
@@ -463,10 +485,72 @@
                 width: 100%;
                 position: static;
             }
+            .project-grid {
+                grid-template-columns: 1fr;
+            }
+            .code-block {
+                padding: 15px;
+                font-size: 14px;
+            }
+            .code-line {
+                padding-left: 40px;
+            }
+            .code-line::before {
+                left: 0px;
+                width: 15px;
+            }
+            .editor-content {
+                padding: 15px;
+            }
+        }
+
+        @media (max-width: 600px) {
+            .container {
+                padding: 10px;
+                gap: 15px;
+            }
+            .hero {
+                padding: 20px 0;
+            }
+            .code-block {
+                padding: 10px;
+                font-size: 13px;
+            }
+            .code-line {
+                padding-left: 40px;
+            }
+            .code-line::before {
+                left: 0;
+                width: 15px;
+            }
+            .project-card h3 {
+                font-size: 1.1rem;
+            }
+            .project-card p {
+                font-size: 0.85rem;
+            }
+        }
+
+        @media (max-width: 400px) {
+            .code-block {
+                font-size: 12px;
+            }
+            .code-line {
+                padding-left: 40px;
+            }
+            .code-line::before {
+                font-size: 0.8em;
+                width: 15px;
+            }
         }
     </style>
 </head>
 <body>
+    <!-- Кнопка переключения темы -->
+    <div class="theme-toggle" id="themeToggle">
+        <i class="fas fa-moon"></i>
+    </div>
+
     <div class="container">
         <div class="sidebar">
             <h2 class="sidebar-title"><i class="fas fa-folder-open"></i> portfolio</h2>
@@ -503,15 +587,17 @@
                         <div class="code-block">
                             <span class="code-line" data-line="1"><span class="code-comment">// My Technology stack:</span></span>
                             <span class="code-line" data-line="2"><span class="code-keyword">const</span> <span class="code-function">technologies</span> = [</span>
+                            <span class="code-line" data-line="3"><span class="code-comment">    // ...</span></span>
+                            <span class="code-line" data-line="4"><span class="code-keyword"></span><span class="code-function"></span>];</span>
                         </div>
 
                         <div class="code-block">
                             <span class="code-line" data-line="1"><span class="code-comment">// My principles:</span></span>
                             <span class="code-line" data-line="2"><span class="code-keyword">function</span> <span class="code-function">develop</span>(<span class="code-param">project</span>) {</span>
-                            <span class="code-line" data-line="3" style="padding-left: 80px"><span class="code-keyword">while</span> (!project.<span class="code-function">isPerfect</span>()) {</span>
-                            <span class="code-line" data-line="4" style="padding-left: 120px">        project.<span class="code-function">refactor</span>();</span>
-                            <span class="code-line" data-line="5" style="padding-left: 120px">        project.<span class="code-function">addFeature</span>();</span>
-                            <span class="code-line" data-line="6" style="padding-left: 80px">}</span>
+                            <span class="code-line" data-line="3">    <span class="code-keyword">while</span> (!project.<span class="code-function">isPerfect</span>()) {</span>
+                            <span class="code-line" data-line="4">        project.<span class="code-function">refactor</span>();</span>
+                            <span class="code-line" data-line="5">        project.<span class="code-function">addFeature</span>();</span>
+                            <span class="code-line" data-line="6">    }</span>
                             <span class="code-line" data-line="7">}</span>
                         </div>
                     </div>
@@ -537,15 +623,6 @@
                                 <span class="code-line"><span class="code-function">window.open</span>(<span class="code-string">"https://github.com/LexKreyn/KinopoiskFree/raw/refs/heads/main/kinopoiskfree.user.js"</span>)</span>
                             </div>
                         </div>
-
-                        <!-- <div class="project-card">
-                            <h3><i class="fas fa-robot"></i> AI Assistant</h3>
-                            <p>NLP Voice Assistant in Python</p>
-                            <div class="code-block">
-                                <span class="code-line"><span class="code-keyword">import</span> ai_assistant</span>
-                                <span class="code-line">assistant.<span class="code-function">listen</span>()</span>
-                            </div>
-                        </div> -->
                     </div>
                 </div>
 
@@ -558,7 +635,6 @@
                         <span class="code-line">- 🎓 Computer Science, University</span>
                         <br>
                         <span class="code-line"><span class="code-comment">## SKILLS</span></span>
-                        <!-- <span class="code-line">- Frontend: <strong>React, Vue, TypeScript</strong></span> -->
                         <span class="code-line">- Backend: <strong>Node.js, Flask/Quart, PHP</strong></span>
                         <span class="code-line">- Database: <strong>MySQL, PostgreSQL, MongoDB, SQLite3</strong></span>
                         <br>
@@ -587,7 +663,7 @@
                             <br>
                             > - <i class="fab fa-telegram"></i> Telegram: <a href="https://t.me/m/yJmonTiSYWI6" target="_blank" class="code-string">@nooneemee</a>
                             <br>
-                            > - <i class="fab fa-discord"></i> Discord: <a href="https://discordapp.com/users/lexisz" target="_blank" class="code-string">lexisz</a>
+                            > - <i class="fab fa-discord"></i> Discord: <a href="https://discordapp.com/users/458273554908184576" target="_blank" class="code-string">lexisz</a>
                             <br>
                             <span class="terminal-command">$ </span><span class="blink">_</span>
                         </div>
@@ -598,6 +674,44 @@
     </div>
 
     <script>
+        const themeToggle = document.getElementById('themeToggle');
+        const themeIcon = themeToggle.querySelector('i');
+
+        const savedTheme = localStorage.getItem('theme');
+        if (savedTheme === 'dark') {
+            document.body.classList.add('dark-mode');
+            themeIcon.classList.replace('fa-moon', 'fa-sun');
+        } else if (savedTheme === 'light') {
+            document.body.classList.remove('dark-mode');
+            themeIcon.classList.replace('fa-sun', 'fa-moon');
+        }
+
+        themeToggle.addEventListener('click', () => {
+            document.body.classList.toggle('dark-mode');
+
+            if (document.body.classList.contains('dark-mode')) {
+                themeIcon.classList.replace('fa-moon', 'fa-sun');
+                localStorage.setItem('theme', 'dark');
+            } else {
+                themeIcon.classList.replace('fa-sun', 'fa-moon');
+                localStorage.setItem('theme', 'light');
+            }
+        });
+
+        function updateTheme() {
+            const hour = new Date().getHours();
+            const isNight = hour < 7 || hour > 20;
+
+            if (!localStorage.getItem('theme')) {
+                document.body.classList.toggle('dark-mode', isNight);
+                themeIcon.classList.toggle('fa-sun', isNight);
+                themeIcon.classList.toggle('fa-moon', !isNight);
+            }
+        }
+
+        updateTheme();
+        setInterval(updateTheme, 60000);
+
         window.onload = function() {
             var cb = document.querySelector('.code-block');
             var line_n = 3;
@@ -609,17 +723,17 @@
                 'Node.js',
                 'Lua'
             ];
+            cb.childNodes[7].remove();
+            cb.childNodes[5].remove();
             Array.from(stackElements).forEach((stackElem, stackID) => {
                 var cl = document.createElement('span');
                 cl.classList.add('code-line');
                 cl.setAttribute('data-line', line_n);
-                cl.setAttribute('style', 'padding-left: 80px;');
 
                 var cs = document.createElement('span');
                 cs.classList.add('code-string');
                 cs.setAttribute('data-line', line_n);
-                cs.innerHTML = `"${stackElem}"`;
-
+                cs.innerHTML = `    "${stackElem}"`;
 
                 cl.appendChild(cs);
 
@@ -652,15 +766,6 @@
                 document.getElementById('current-file').textContent = item.textContent.trim();
             });
         });
-
-        function updateTheme() {
-            const hour = new Date().getHours();
-            const isNight = hour < 7 || hour > 20;
-            document.body.classList.toggle('dark-mode', isNight);
-        }
-        
-        updateTheme();
-        setInterval(updateTheme, 60000);
 
         console.log('%cHi! , The source code is available on GitHub: https://github.com/LexKreyn/portfolio', 'color: #4da6ff; font-size: 14px;');
         console.log('Enter help() for additional commands.');
